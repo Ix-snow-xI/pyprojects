@@ -56,29 +56,30 @@ try:
         output = check_security(ports)
         print(output)
 except FileNotFoundError:
-    # Что делать, если файла нет
-    print("Ошибка: Такой файл не найден! Проверьте имя.")
-    exit() # Аккуратно завершить программу
+    # What to do if the wrong file name
+    print("Error: no such file.")
+    exit()
 except json.JSONDecodeError:
-    # Что делать, если внутри файла мусор, а не JSON
-    print("Ошибка: Файл поврежден или имеет неверный формат JSON.")
+    # if its filled with thrash and not json type info
+    print("Error: file corrupted or not .JSON format.")
     exit()
 
 def main():
     try:
-        user_input = input("какой файл прочитать?: ")
+        user_input = input("which file to read?: ")
         with open(user_input, "r") as f:
             data = (json.load(f))
         for server, ports in data.items():
             output = check_security(ports)
             print(output)
     except FileNotFoundError:
-        # Что делать, если файла нет
-        print("Ошибка: Такой файл не найден! Проверьте имя.")
-        exit()  # Аккуратно завершить программу
+        # What to do if the wrong file name
+        print("Error: no such file.")
+        exit()  
     except json.JSONDecodeError:
-        # Что делать, если внутри файла мусор, а не JSON
-        print("Ошибка: Файл поврежден или имеет неверный формат JSON.")
+        # if its filled with thrash and not json type info
+        print("Error: file corrupted or not .JSON format.")
         exit()
 if __name__=="__main__":
+
     main()
