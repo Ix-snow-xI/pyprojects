@@ -1,14 +1,16 @@
 import time
 import requests
-
+import json
 def main():
     print("=== SOC VT TOOL v1.0 ===")
-    choice = int(input(f"file (1) or IP (2): "))
+    choice = int(input(f"file (1) or IP (2) or Hash(3): "))
     API_KEY = input("YOUR VT API KEY")
     if choice==1:
         check_file(API_KEY)
-    else:
+    elif choice==2:
         check_ip(API_KEY)
+    else:
+        check_hash(API_KEY)
 
 def check_ip(api):
     url = f"https://www.virustotal.com/api/v3/ip_addresses/"
@@ -57,17 +59,18 @@ def check_file(api):
             time.sleep(15)
             continue
 
+
+def check_hash(api):
+    hash=input("Input the hash you want to check?")
+
+    url = "https://www.virustotal.com/api/v3/files/id/"
+
+    headers = {"accept": "application/json",
+    "x-apikey": api}
+    url+=hash
+    response = requests.get(url+hash,headers=headers)
+
+    print(response.text)
+
 if __name__=="__main__":
     main()
-
-
-
-
-
-
-
-
-
-
-
-
