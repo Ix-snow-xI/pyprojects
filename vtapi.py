@@ -1,23 +1,25 @@
 import time
 import requests
-import json
+
 def main():
     print("=== SOC VT TOOL v1.0 ===")
-    choice = int(input(f"file (1) or IP (2) or Hash(3): "))
+    choice = int(input(f"file (1) or IP (2) or Hash(3) or Domain (4)?: "))
     API_KEY = input("YOUR VT API KEY")
-    if choice==1:
-        check_file(API_KEY)
-    elif choice==2:
-        check_ip(API_KEY)
-    else:
-        check_hash(API_KEY)
 
-def check_ip(api):
-    url = f"https://www.virustotal.com/api/v3/ip_addresses/"
-    ip=input("what's the ip you wanna check? ")
-    url+=ip
     headers = {"accept": "application/json",
-                "x-apikey": api}
+               "x-apikey": API_KEY}
+    
+    if choice==1:
+        check_file(headers)
+    elif choice==2:
+        check_ip(headers)
+    elif choice==3:
+        check_hash(headers)
+    else:
+        check_domain(headers)
+def check_ip(api,headers):
+    ip=input("what's the ip you wanna check? ")
+    url = f"https://www.virustotal.com/api/v3/ip_addresses/${ip}"
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         result = response.json()
@@ -32,20 +34,19 @@ def check_ip(api):
             print("Status:    [+] CLEAN")
     else:
         print("Something went wrong")
-def check_file(api):
-    url = f"https://www.virustotal.com/api/v3/files"
+def check_file(api,headers):
     userfile = input("what file do you wanna check?").strip('"')
-    headers = {"accept": "application/json",
-               "x-apikey": api}
+    url = f"https://www.virustotal.com/api/v3/files"
+    
     with open(userfile, "rb") as f:
         files = {"file": (userfile, f)}
         response = requests.post(url, headers=headers, files=files)
     result = response.json()
     analysis_id = result['data']['id']
-    print("your analysis_ ID: ", analysis_id,"I'll deliver the results as soon as possible(2min+<)")
+    print(f"your analysis_ ID: ${analysis_id}I'll deliver the results as soon as possible(2min+<)")
     time.sleep(120)
+    
     while True:
-
         results_url = f"https://www.virustotal.com/api/v3/analyses/{analysis_id}"
         response = requests.get(results_url, headers=headers)
         data = response.json()
@@ -60,17 +61,26 @@ def check_file(api):
             continue
 
 
-def check_hash(api):
-    hash=input("Input the hash you want to check?")
+def check_hash(headers):
+    userhash=input("Input the hash you want to check?")
 
-    url = "https://www.virustotal.com/api/v3/files/id/"
+    url = f"https://www.virustotal.com/api/v3/files/id/${userhash}"
+    response = requests.get(url+userhash,headers=headers)
+    result = response.json()
 
-    headers = {"accept": "application/json",
-    "x-apikey": api}
-    url+=hash
-    response = requests.get(url+hash,headers=headers)
+    print(f"${result['data']['attributes']['last_analysis_stats']['malicious']} engines flagged this as malicious.")
 
-    print(response.text)
+def check_domain(headers):
+    domain=input("what is the domain you wanna check? ").strip().replace("https://  ","")
+    url = f"https://www.virustotal.com/api/v3/domains/${domain}"
+    response = requests.get(url, headers=headers)
+    result = response.json()
+    print(result)
+    if response.status_code == 200:
+        print(f"${result['data']['attributes']['last_analysis_stats']['malicious']} engines flagged this as malicious.")
+    else:
+        print("Something went wrong")
+
 
 if __name__=="__main__":
     main()
