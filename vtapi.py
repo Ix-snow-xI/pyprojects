@@ -2,10 +2,10 @@ import time
 import requests
 
 def main():
-    print("=== SOC VT TOOL v1.0 ===")
+    print("=== SOC VT TOOL ===")
     choice = int(input(f"file (1) or IP (2) or Hash(3) or Domain (4)?: "))
     API_KEY = input("YOUR VT API KEY")
-
+    url = f"https://www.virustotal.com/api/v3/"
     headers: dict[str, str] = {"accept": "application/json",
                "x-apikey": API_KEY}
 
@@ -15,11 +15,11 @@ def main():
         check_ip(headers)
     elif choice==3:
         check_hash(headers)
-    else:
+    elif choice==4:
         check_domain(headers)
-def check_ip(headers):
+def check_ip(headers,url):
     ip=input("what's the ip you wanna check? ")
-    url = f"https://www.virustotal.com/api/v3/ip_addresses/{ip}"
+    url +=ip_addresses/{ip}"
     response = requests.get(url, headers=headers)
     if response.status_code == 200:
         result = response.json()
@@ -34,9 +34,9 @@ def check_ip(headers):
             print("Status:    [+] CLEAN")
     else:
         print("Something went wrong")
-def check_file(headers):
+def check_file(headers,url):
     userfile = input("what file do you wanna check?").strip('"')
-    url = "https://www.virustotal.com/api/v3/files"
+    url += f"files"
 
     with open(userfile, "rb") as f:
         files = {"file": (userfile, f)}
@@ -61,19 +61,19 @@ def check_file(headers):
             continue
 
 
-def check_hash(headers):
+def check_hash(headers,url):
     userhash=input("Input the hash you want to check?")
 
-    url = f"https://www.virustotal.com/api/v3/files/id/{userhash}"
-    response = requests.get(url+userhash,headers=headers)
+    url += f"files/id/{userhash}"
+    response = requests.get(url,headers=headers)
     result = response.json()
 
     print(f"${result['data']['attributes']['last_analysis_stats']['malicious']} engines flagged this as malicious.")
 
-def check_domain(headers):
+def check_domain(headers,url):
     domain=input("what is the domain you wanna check? ").rstrip('/').replace("https://","")
     print(domain)
-    url = f"https://www.virustotal.com/api/v3/domains/{domain}"
+    url += f"domains/{domain}"
     response = requests.get(url, headers=headers)
     result = response.json()
     if response.status_code == 200:
