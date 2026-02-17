@@ -39,3 +39,6 @@ A Python-based CLI utility designed for Security Operations Center (SOC) analyst
 1. Clone the repository:
    ```bash
    git clone [https://github.com/yourusername/soc-vt-tool.git](https://github.com/yourusername/soc-vt-tool.git)
+
+### Queuing task
+I couldn't finish the queuing project (smo_snippet) so i'll be delaying for an indefinite period
